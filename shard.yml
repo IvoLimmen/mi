@@ -6,7 +6,7 @@ authors:
   - Ivo Limmen <ivo@limmen.org>
 
 targets:
-  mvni:
+  mi:
     main: src/mi.cr
 
 crystal: '>= 1.12.2'
