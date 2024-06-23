@@ -1,0 +1,14 @@
+name: mi
+description: Finds the artifacts from a maven build to execute for a quicker build
+version: 0.1.0
+
+authors:
+  - Ivo Limmen <ivo@limmen.org>
+
+targets:
+  mvni:
+    main: src/mi.cr
+
+crystal: '>= 1.12.2'
+
+license: MIT
