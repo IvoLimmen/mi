@@ -1,9 +1,24 @@
 require "process"
+require "xml"
 
 projects = [] of String
 
 def is_jar(file : String) : Bool
   !File.read(file).index("<packaging>jar</packaging>").nil?
+end
+
+def get_artifact_name(file : String) : String | Nil
+
+  doc = XML.parse(File.read(file))
+  project = doc.first_element_child
+  if project
+    project.children.select(&.element?).each do |child|
+      if child.name == "artifactId"
+        return child.content
+      end
+    end
+  end
+  nil
 end
 
 def change_files : Array(String)
@@ -12,7 +27,7 @@ def change_files : Array(String)
   return_value = [] of String
   stdout = IO::Memory.new
   stderr = IO::Memory.new
-  status = Process.run("git", args, shell: false, output: stdout, error: stderr)
+  status = Process.run(cmd, args, shell: false, output: stdout, error: stderr)
   if status.success?
     stdout.to_s.split("\n").each do |s|
       if s.strip().index(' ') != nil
@@ -39,29 +54,35 @@ def search_pom_files(file : String) : String | Nil
   end
 end
 
-def get_artifact_name(pom_file : String) : String
-
-  puts pom_file
-
-  while pom_file.count("/") > 1
-    index = pom_file.index("/").not_nil!
-    pom_file = pom_file[index + 1, pom_file.size]
-  end
-
-  puts pom_file
-
-  ":" + pom_file[0..-9]
-end
-
 # run
 change_files().each do |s|
   found = search_pom_files(s)
 
   if !found.nil?
-    projects << get_artifact_name(found)
+    file = get_artifact_name(found)
+    if !file.nil?
+      projects << file
+    end
   end
 end
 
-total_set = projects.to_set.join(",")
+total_set = [] of String
 
-puts "mvn clean install -pl #{total_set}"
+projects.each do |s|
+  total_set << ":#{s}"
+end
+
+output = [] of String
+
+# start with the mvn command
+output << "mvn"
+
+# add all passed arguments
+ARGV.each do |s|
+  output << s
+end
+
+# add the special pl argument with the projects that are changed
+output << "-pl #{total_set.join(",")}"
+
+puts output.join(" ")

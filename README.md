@@ -4,15 +4,12 @@ Running `mi` will create a list of artifacts to build to shorten the build time.
 
 ## Installation
 
-TODO: Write installation instructions here
+Download and put into a 'bin' directory that is on your path.
 
 ## Usage
 
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
+Run 'mi' in a directory of a maven project that contains changes. 
+Will return the command to execute to build only what needed.
 
 ## Contributing
 
