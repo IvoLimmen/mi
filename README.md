@@ -2,6 +2,10 @@
 
 Running `mi` will create a list of artifacts to build to shorten the build time.
 
+## Build
+
+    shards build
+
 ## Installation
 
 Download and put into a 'bin' directory that is on your path.

@@ -54,6 +54,34 @@ def search_pom_files(file : String) : String | Nil
   end
 end
 
+def run(set : Array(String))
+  cmd = "mvn"
+  args = [] of String
+
+  # Show what we are going to run
+  output = [] of String
+
+  # start with the mvn command
+  output << "mvn"
+
+  # add all passed arguments
+  ARGV.each do |s|
+    output << s
+    args << s
+  end
+
+  # add the special pl argument with the projects that are changed
+  output << "-pl #{set.join(",")}"
+
+  # Output command
+  puts output.join(" ")
+
+  # add projects to run
+  args << "-pl"
+  args << "#{set.join(",")}"
+  status = Process.exec(cmd, args)
+end
+
 # run
 change_files().each do |s|
   found = search_pom_files(s)
@@ -72,17 +100,4 @@ projects.each do |s|
   total_set << ":#{s}"
 end
 
-output = [] of String
-
-# start with the mvn command
-output << "mvn"
-
-# add all passed arguments
-ARGV.each do |s|
-  output << s
-end
-
-# add the special pl argument with the projects that are changed
-output << "-pl #{total_set.join(",")}"
-
-puts output.join(" ")
+run(total_set)
