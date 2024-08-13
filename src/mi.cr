@@ -32,7 +32,11 @@ def change_files : Array(String)
     stdout.to_s.split("\n").each do |s|
       if s.strip().index(' ') != nil
         parts = s.strip().split(" ")
-        return_value << parts[1]
+        if parts[0] == "RM"
+          return_value << parts[3]
+        else
+          return_value << parts[1]
+        end
       end
     end
   end
@@ -76,9 +80,12 @@ def run(set : Array(String))
   # Output command
   puts output.join(" ")
 
-  # add projects to run
-  args << "-pl"
-  args << "#{set.join(",")}"
+  # add projects to run when there are any
+  if set.size != 0
+    args << "-pl"
+    args << "#{set.join(",")}"
+  end
+
   status = Process.exec(cmd, args)
 end
 
@@ -90,6 +97,7 @@ change_files().each do |s|
     file = get_artifact_name(found)
     if !file.nil?
       projects << file
+      projects = projects.uniq()
     end
   end
 end
