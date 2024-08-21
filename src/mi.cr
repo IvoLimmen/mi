@@ -3,8 +3,11 @@ require "xml"
 
 projects = [] of String
 
+# It is a JAR if:
+#  - packaging is omitted
+#  - packaging is NOT pom (thus JAR, WAR, SAR and EAR)
 def is_jar(file : String) : Bool
-  !File.read(file).index("<packaging>jar</packaging>").nil?
+  File.read(file).index("<packaging>pom</packaging>").nil?
 end
 
 def get_artifact_name(file : String) : String | Nil
@@ -45,17 +48,13 @@ def change_files : Array(String)
 end
 
 def search_pom_files(file : String) : String | Nil
-
-  if File.exists?(file)
     if file.index("/src") != nil
-      index = file.index("/src").not_nil!
-      pom_file = file[0, index] + "/pom.xml"
-
-      if File.exists?(pom_file) && is_jar(pom_file)
-        pom_file
-      end
+        index = file.index("/src").not_nil!
+        pom_file = file[0, index] + "/pom.xml"
+        if File.exists?(pom_file) && is_jar(pom_file)
+            pom_file
+        end
     end
-  end
 end
 
 def run(set : Array(String))
@@ -90,7 +89,7 @@ def run(set : Array(String))
 end
 
 # run
-change_files().each do |s|
+change_files().uniq().each do |s|
   found = search_pom_files(s)
 
   if !found.nil?
