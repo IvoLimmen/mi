@@ -58,34 +58,38 @@ def search_pom_files(file : String) : String | Nil
 end
 
 def run(set : Array(String))
-  cmd = "mvn"
-  args = [] of String
-
-  # Show what we are going to run
-  output = [] of String
-
-  # start with the mvn command
-  output << "mvn"
-
-  # add all passed arguments
-  ARGV.each do |s|
-    output << s
-    args << s
-  end
-
-  # add the special pl argument with the projects that are changed
-  output << "-pl #{set.join(",")}"
-
-  # Output command
-  puts output.join(" ")
-
-  # add projects to run when there are any
   if set.size != 0
-    args << "-pl"
-    args << "#{set.join(",")}"
-  end
+    cmd = "mvn"
+    args = [] of String
 
-  status = Process.exec(cmd, args)
+    # Show what we are going to run
+    output = [] of String
+
+    # start with the mvn command
+    output << "mvn"
+
+    # add all passed arguments
+    ARGV.each do |s|
+      output << s
+      args << s
+    end
+
+    # add the special pl argument with the projects that are changed
+    output << "-pl #{set.join(",")}"
+
+    # add projects to run when there are any
+    if set.size != 0
+      args << "-pl"
+      args << "#{set.join(",")}"
+    end
+
+    # Output command
+    puts output.join(" ")
+
+    status = Process.exec(cmd, args)
+  else
+    puts "Error: No modules with changes found"
+  end
 end
 
 # run

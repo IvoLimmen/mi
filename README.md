@@ -9,11 +9,12 @@ Running `mi` will create a list of artifacts to build to shorten the build time.
 ## Installation
 
 Download and put into a 'bin' directory that is on your path.
+Depends on the GIT command line utility.
 
 ## Usage
 
 Run 'mi' in a directory of a maven project that contains changes. 
-Will return the command to execute to build only what needed.
+Will return show the command (and executes) to build only what needed.
 
 ## Contributing
 
